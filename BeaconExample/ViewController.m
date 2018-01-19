@@ -16,14 +16,24 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  // Do any additional setup after loading the view, typically from a nib.
+  MTCentralManager *manager = [MTCentralManager sharedInstance];
+  manager.stateBlock = ^(PowerState state) {
+    NSLog(@"current bluetooth state：%lu", (unsigned long)state);
+  };
+  
+  [manager startScan:^(NSArray<MTPeripheral *> *peris){
+    for (NSInteger i = 0; i < peris; i++) {
+      MTPeripheral *peri = peris[1];
+      
+      MTFrameHandler *framer = peri.framer;
+      NSString *name = framer.name;
+      NSInteger rssi = framer.rssi;
+      NSInteger battery = framer.battery;
+      NSString *mac = framer.mac;
+      NSArray *frame = framer.advFrames;
+    }
+  }];
+  
+  [manager stopScan];
 }
-
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
-  // Dispose of any resources that can be recreated.
-}
-
-
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MTBeaconPlus/MTBeaconPlus.h>
 
 @interface ViewController : UIViewController
 
