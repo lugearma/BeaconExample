@@ -18,6 +18,7 @@
 @property (nonatomic, strong) MTCentralManager *centralManager;
 @property (nonatomic, strong) MTFrameHandler *aFrameHandle;
 @property (nonatomic, strong) MTPeripheral *aMTPeripheral;
+@property (nonatomic, strong) MTConnectionHandler *aConnectionHandler;
 
 @end
 
@@ -30,15 +31,35 @@
   
   centralManager.stateBlock = ^(PowerState state) {
     if (state == PowerStatePoweredOn){
-      NSLog(@"🐶🐶🐶🐶🐶🐶🐶🐶🐶🐶");
+      NSLog(@"Bluethooth ✅");
+    } else {
+      NSLog(@"Bluethooth ❌");
     }
   };
   
   [centralManager startScan:^(NSArray<MTPeripheral *> *peris) {
-    MTPeripheral *peri = peris[0];
-    NSLog(@"MAC: %@", peri.framer.mac);
-  }];
+    if (aMTPeripheral == nil) {
+      NSLog(@"Number of peripherials %d", peris.count);
+      aMTPeripheral = peris[0];
+      NSLog(@"MAC: %@", aMTPeripheral.framer.mac);
+      
+      [centralManager connectToPeriperal:aMTPeripheral passwordRequire:^(MTPasswordBlock passwordBlock) {
+        NSString *password = @"minew123";
+        passwordBlock(password);
+      }];
+      
+      aMTPeripheral.connector.statusChangedHandler = ^(ConnectionStatus status, NSError *error) {
+        if (status == StatusCompleted) {
+          NSLog(@"Connection ✅");
+          MTConnectionHandler *con = aMTPeripheral.connector;
+          ConnectionStatus conSte = con.status;  // current connection status
+          NSLog(@"Conectionc Status %d", conSte);
+        } else {
+          NSLog(@"Connection ❌");
+        }
+      };
+    }
+ }];
 }
-
 @end
 

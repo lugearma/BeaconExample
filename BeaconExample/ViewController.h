@@ -20,6 +20,7 @@
   MTCentralManager *centralManager;
   MTFrameHandler *aFrameHandler;
   MTPeripheral *aMTPeripheral;
+  MTConnectionHandler *aConnectionHnadler;
 }
 
 
