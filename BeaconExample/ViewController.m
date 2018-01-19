@@ -9,6 +9,15 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+@property (nonatomic, weak) IBOutlet UILabel *nameLabel;
+@property (nonatomic, weak) IBOutlet UILabel *rssiLabel;
+@property (nonatomic, weak) IBOutlet UILabel *batteryLabel;
+@property (nonatomic, weak) IBOutlet UILabel *macLabel;
+@property (nonatomic, weak) IBOutlet UILabel *framesLabel;
+
+@property (nonatomic, strong) MTCentralManager *centralManager;
+@property (nonatomic, strong) MTFrameHandler *aFrameHandle;
+@property (nonatomic, strong) MTPeripheral *aMTPeripheral;
 
 @end
 
@@ -16,24 +25,20 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
-  MTCentralManager *manager = [MTCentralManager sharedInstance];
-  manager.stateBlock = ^(PowerState state) {
-    NSLog(@"current bluetooth state：%lu", (unsigned long)state);
+  
+  centralManager = [MTCentralManager sharedInstance];
+  
+  centralManager.stateBlock = ^(PowerState state) {
+    if (state == PowerStatePoweredOn){
+      NSLog(@"🐶🐶🐶🐶🐶🐶🐶🐶🐶🐶");
+    }
   };
   
-  [manager startScan:^(NSArray<MTPeripheral *> *peris){
-    for (NSInteger i = 0; i < peris; i++) {
-      MTPeripheral *peri = peris[1];
-      
-      MTFrameHandler *framer = peri.framer;
-      NSString *name = framer.name;
-      NSInteger rssi = framer.rssi;
-      NSInteger battery = framer.battery;
-      NSString *mac = framer.mac;
-      NSArray *frame = framer.advFrames;
-    }
+  [centralManager startScan:^(NSArray<MTPeripheral *> *peris) {
+    MTPeripheral *peri = peris[0];
+    NSLog(@"MAC: %@", peri.framer.mac);
   }];
-  
-  [manager stopScan];
 }
+
 @end
+
